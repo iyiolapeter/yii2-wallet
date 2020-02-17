@@ -14,12 +14,8 @@
         "yiisoft/yii2": "~2.0.0",
         "iyiolapeter/yii2-base": "dev-master"
     },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/iyiolapeter/yii2-base"
-        }
-    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "autoload": {
         "psr-4": {
             "pso\\yii2\\wallet\\": ""
