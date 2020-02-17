@@ -1,0 +1,22 @@
+{
+    "name": "iyiolapeter/yii2-wallet",
+    "description": "Simple Wallet Management Module Yii2",
+    "type": "yii2-extension",
+    "keywords": ["yii2","extension"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Iyiola Peter",
+            "email": "iyiolapeter@gmail.com"
+        }
+    ],
+    "require": {
+        "yiisoft/yii2": "~2.0.0",
+        "iyiolapeter/yii2-base": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "pso\\yii2\\wallet\\": ""
+        }
+    }
+}
