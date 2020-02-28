@@ -21,7 +21,11 @@ class m200216_092203_init_wallet_tables extends Migration
             // http://stackoverflow.com/questions/766809/whats-the-difference-between-utf8-general-ci-and-utf8-unicode-ci
             $tableOptions = 'CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB';
         }
-        $user = static::coalescePsoParams(['wallet.user.table','user.table']);
+        $setForeign = static::getPsoParam('userForeignKeys', true);
+        $user = null;
+        if($setForeign){
+            $user = static::coalescePsoParams(['wallet.user.table','user.table']);
+        }
         $this->createTable('{{%wallet_type}}', [
             'id' => $this->string(32)->unique(),
             'name' => $this->string()->notNull(),
@@ -42,7 +46,9 @@ class m200216_092203_init_wallet_tables extends Migration
             'created_at' => $this->timestamp()->defaultExpression('CURRENT_TIMESTAMP'),
             'updated_at' => $this->timestamp()->defaultValue(null)->append('ON UPDATE CURRENT_TIMESTAMP'),
         ], $tableOptions);
-        $this->addForeignKey('fk_wallet_user','{{%wallet}}', 'user_id', $user,'id','RESTRICT', 'CASCADE');
+        if($setForeign){
+            $this->addForeignKey('fk_wallet_user','{{%wallet}}', 'user_id', $user,'id','RESTRICT', 'CASCADE');
+        }
         $this->addForeignKey('fk_wallet_wallet_type','{{%wallet}}', 'type_id', '{{%wallet_type}}','id','RESTRICT', 'CASCADE');
         $this->createIndex('idx_wallet_user_type', '{{%wallet}}', ['user_id', 'type_id'], true);
         $this->createTable('{{%wallet_transaction}}', [
