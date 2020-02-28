@@ -21,7 +21,7 @@ class m200216_092203_init_wallet_tables extends Migration
             // http://stackoverflow.com/questions/766809/whats-the-difference-between-utf8-general-ci-and-utf8-unicode-ci
             $tableOptions = 'CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB';
         }
-        $setForeign = static::getPsoParam('userForeignKeys', true);
+        $setForeign = static::getPsoParam('wallet.userForeignKeys', true);
         $user = null;
         if($setForeign){
             $user = static::coalescePsoParams(['wallet.user.table','user.table']);
