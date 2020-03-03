@@ -2,6 +2,7 @@
 
 namespace pso\yii2\wallet\models;
 
+use pso\yii2\wallet\exceptions\InsufficientBalanceException;
 use pso\yii2\wallet\WalletModule;
 use UserException;
 use Yii;
@@ -121,11 +122,11 @@ class Wallet extends \yii\db\ActiveRecord
         if($checkOverdraft && $this->can_overdraft && !empty($this->overdraft_limit)){
             $overdraft = $this->overdraft_limit + $this->balance;
             if($overdraft < $value){
-                throw new UserException('Overdraft limit exceeded');
+                throw new InsufficientBalanceException('Overdraft limit exceeded');
             }
         }
         if($this->balance < $value){
-            throw new UserException('Insufficient funds');
+            throw new InsufficientBalanceException('Insufficient funds');
         }
         return true;
     }

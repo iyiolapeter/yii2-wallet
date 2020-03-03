@@ -3,6 +3,7 @@
 namespace pso\yii2\wallet\models;
 
 use pso\yii2\base\libs\UUID;
+use pso\yii2\wallet\exceptions\WalletNotFoundException;
 use Yii;
 use yii\base\Model;
 use pso\yii2\wallet\WalletModule;
@@ -89,7 +90,7 @@ class WalletInstruction extends Model
         }
         $wallet = isset($this->wallet_id)?Wallet::findOne($this->wallet_id):Wallet::findByUserAndType($this->user_id, $this->wallet_type, $this->type === SELF::TYPE_CREDIT);
         if(is_null($wallet)){
-            throw new InvalidCallException('Wallet not found!');
+            throw new WalletNotFoundException('Wallet not found!');
         }
         $this->setWallet($wallet);
         return true;
