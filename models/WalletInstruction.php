@@ -8,7 +8,6 @@ use Yii;
 use yii\base\Model;
 use pso\yii2\wallet\WalletModule;
 use pso\yii2\wallet\models\WalletTransaction;
-use yii\base\InvalidCallException;
 
 /**
  * This is the model class for manipulating user wallets.
@@ -105,9 +104,12 @@ class WalletInstruction extends Model
         return $value;
     }
 
-    private function validateTransaction(){
+    private function validateTransaction(Wallet $wallet){
+        if(!$wallet){
+            throw new WalletNotFoundException('Wallet not found!');
+        }
         if($this->type === SELF::TYPE_DEBIT){
-            return $this->wallet->can($this->value, $this->type);
+            return $wallet->can($this->value, $this->type);
         }
         return true;
     }
@@ -131,13 +133,14 @@ class WalletInstruction extends Model
         $transaction  = $db->getTransaction();
         if(is_null($transaction)){
             $isolated = true;
-            $transaction = $db->beginTransaction(\yii\db\Transaction::SERIALIZABLE);
+            $transaction = $db->beginTransaction();
         }
         try {
-            $this->validateTransaction();
-            $this->wallet->balance += $this->transformValue($this->value);
+            $command = Wallet::find()->where(['id' => $this->wallet->id])->createCommand()->rawSql.' FOR UPDATE';
+            $wallet = Wallet::findBySql($command)->one();
+            $this->validateTransaction($wallet);
             $record = $this->createTransactionRecord();
-            if($this->wallet->save() && $record->save()){
+            if($wallet->updateCounters(['balance' => $this->transformValue($this->value)]) && $record->save()){
                 if($isolated){
                     $transaction->commit();
                 }
